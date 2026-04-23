@@ -8,7 +8,17 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "check-types": "tsc --noEmit",
+    "precommit:checks": "lint-staged && bun run check-types",
+    "prepush:checks": "bun run lint && bun run check-types && bun run build",
+    "prerebase:checks": "bun run lint && bun run check-types",
+    "postcheckout:checks": "bun run check-types",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "{src,public}/**/*.{js,jsx,ts,tsx,css,scss,html}": "prettier --write",
+    "*.{js,jsx,ts,tsx,json,md,css,scss,html}": "prettier --write"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -17,6 +27,7 @@
     "@mui/icons-material": "^9.0.0",
     "@mui/material": "^9.0.0",
     "framer-motion": "^12.38.0",
+    "husky": "^9.1.7",
     "lucide-react": "^1.8.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
@@ -29,12 +40,14 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
+    "@vitejs/plugin-react-swc": "^4.3.0",
     "eslint": "^10.2.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.5.0",
+    "lint-staged": "^16.4.0",
     "prettier": "^3.8.3",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.59.0",
