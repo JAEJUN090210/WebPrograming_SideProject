@@ -1,12 +1,11 @@
 import { Routes, Route } from "react-router-dom"
-import { useEffect, useState } from "react"
-import { Global } from "@emotion/react"
+import ErrorPage from "./pages/ErrorPage"
 
 function App() {
   return (
     <>
       <Routes>
-        <Route path="*" element={<NotFound />} />
+        <Route path="*" element={<ErrorPage errorCode={401} />} />
       </Routes>
     </>
   )
