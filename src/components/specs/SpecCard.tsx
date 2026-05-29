@@ -39,7 +39,7 @@ export default function SpecCard({
       }}
     >
       <Stack spacing={2}>
-        <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} justifyContent="space-between">
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ justifyContent: "space-between" }}>
           <Stack spacing={0.5}>
             {eyebrow ? (
               <Typography variant="overline" sx={{ color: "rgba(148, 163, 184, 0.9)" }}>
@@ -53,7 +53,7 @@ export default function SpecCard({
               {description}
             </Typography>
           </Stack>
-          <Stack spacing={1} alignItems={{ xs: "flex-start", sm: "flex-end" }}>
+          <Stack spacing={1} sx={{ alignItems: { xs: "flex-start", sm: "flex-end" } }}>
             <SpecStatusChip status={status} />
             <Typography variant="caption" sx={{ color: "rgba(148, 163, 184, 0.8)" }}>
               Updated {updatedAt} · {owner}
@@ -66,10 +66,12 @@ export default function SpecCard({
         <Stack
           direction={{ xs: "column", sm: "row" }}
           spacing={1.5}
-          justifyContent="space-between"
-          alignItems={{ xs: "flex-start", sm: "center" }}
+          sx={{
+            justifyContent: "space-between",
+            alignItems: { xs: "flex-start", sm: "center" },
+          }}
         >
-          <Stack direction="row" spacing={1} flexWrap="wrap" rowGap={1}>
+          <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap", rowGap: 1 }}>
             {tags.map(tag => (
               <Chip
                 key={tag}

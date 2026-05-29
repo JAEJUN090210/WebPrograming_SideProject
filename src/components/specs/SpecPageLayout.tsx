@@ -28,10 +28,17 @@ export default function SpecPageLayout({ title, description, eyebrow, children }
                 {eyebrow}
               </Typography>
             ) : null}
-            <Typography variant="h3" sx={{ fontWeight: 700, fontFamily: '"Noto Sans KR", "Segoe UI", sans-serif' }}>
+            <Typography
+              variant="h3"
+              sx={{
+                fontWeight: 700,
+                color: "#f8fafc",
+                fontFamily: '"Noto Sans KR", "Segoe UI", sans-serif',
+              }}
+            >
               {title}
             </Typography>
-            <Typography sx={{ mt: 1, color: "rgba(226, 232, 240, 0.72)" }}>{description}</Typography>
+            <Typography sx={{ mt: 1, color: "rgba(226, 232, 240, 0.78)" }}>{description}</Typography>
           </Box>
           {children}
         </Stack>

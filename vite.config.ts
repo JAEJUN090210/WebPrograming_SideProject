@@ -1,9 +1,20 @@
 import { defineConfig } from "vite"
 import react from "@vitejs/plugin-react-swc"
 import { VitePWA } from "vite-plugin-pwa"
+// @ts-expect-error Vite can import the local ESM middleware at runtime.
+import { createAuthMiddleware } from "./server/authMiddleware.mjs"
 
 export default defineConfig({
   plugins: [
+    {
+      name: "webpidp-auth-api",
+      configureServer(server) {
+        server.middlewares.use(createAuthMiddleware())
+      },
+      configurePreviewServer(server) {
+        server.middlewares.use(createAuthMiddleware())
+      },
+    },
     react(),
     VitePWA({
       registerType: "autoUpdate",

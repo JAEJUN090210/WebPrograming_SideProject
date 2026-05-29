@@ -1,6 +1,7 @@
-import { Box, Button, Divider, Stack, TableCell, TableRow, Typography } from "@mui/material"
+import { Box, Button, Divider, TableCell, TableRow, Typography } from "@mui/material"
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined"
 import { useEffect, useMemo, useState } from "react"
+import { Link as RouterLink } from "react-router-dom"
 import SpecPageLayout from "../components/specs/SpecPageLayout"
 import SpecToolbar, { type FilterOption } from "../components/specs/SpecToolbar"
 import SpecTable from "../components/specs/SpecTable"
@@ -73,6 +74,8 @@ export default function FunctionalSpecListPage() {
           <Button
             variant="contained"
             startIcon={<AddOutlinedIcon />}
+            component={RouterLink}
+            to="/specs/functional/new"
             sx={{
               backgroundColor: "#22c55e",
               color: "#08150d",
@@ -116,6 +119,8 @@ export default function FunctionalSpecListPage() {
                 <Button
                   variant="text"
                   size="small"
+                  component={RouterLink}
+                  to={`/specs/functional/${spec.id}`}
                   sx={{
                     color: "#38bdf8",
                     textTransform: "none",

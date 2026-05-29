@@ -16,8 +16,10 @@ export default function SpecPagination({ page, pageCount, pageSize, totalCount, 
     <Stack
       direction={{ xs: "column", md: "row" }}
       spacing={2}
-      alignItems={{ md: "center" }}
-      justifyContent="space-between"
+      sx={{
+        alignItems: { md: "center" },
+        justifyContent: "space-between",
+      }}
     >
       <Typography variant="body2" sx={{ color: "rgba(226, 232, 240, 0.7)" }}>
         {start}-{end} / 총 {totalCount}건

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 
 type PaginationResult<T> = {
   page: number
@@ -11,15 +11,12 @@ type PaginationResult<T> = {
 export default function usePagination<T>(items: T[], pageSize: number): PaginationResult<T> {
   const [page, setPage] = useState(1)
   const pageCount = Math.max(1, Math.ceil(items.length / pageSize))
-
-  useEffect(() => {
-    setPage(current => Math.min(current, pageCount))
-  }, [pageCount])
+  const resolvedPage = Math.min(page, pageCount)
 
   const pageItems = useMemo(() => {
-    const start = (page - 1) * pageSize
+    const start = (resolvedPage - 1) * pageSize
     return items.slice(start, start + pageSize)
-  }, [items, page, pageSize])
+  }, [items, resolvedPage, pageSize])
 
-  return { page, setPage, pageCount, pageItems, pageSize }
+  return { page: resolvedPage, setPage, pageCount, pageItems, pageSize }
 }

@@ -12,7 +12,7 @@ export default function SpecTitleCell({ title, tags }: SpecTitleCellProps) {
         {title}
       </Typography>
       {tags.length > 0 ? (
-        <Stack direction="row" spacing={0.75} flexWrap="wrap" rowGap={0.5}>
+        <Stack direction="row" spacing={0.75} sx={{ flexWrap: "wrap", rowGap: 0.5 }}>
           {tags.slice(0, 3).map(tag => (
             <Chip
               key={tag}

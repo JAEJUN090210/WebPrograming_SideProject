@@ -46,7 +46,7 @@ export default function SpecToolbar({
     >
       <Stack spacing={2}>
         {title || subtitle || primaryAction ? (
-          <Stack direction={{ xs: "column", sm: "row" }} spacing={2} justifyContent="space-between">
+          <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ justifyContent: "space-between" }}>
             <Box>
               {title ? (
                 <Typography variant="h5" sx={{ fontWeight: 700, color: "#f8fafc" }}>
@@ -63,18 +63,20 @@ export default function SpecToolbar({
           </Stack>
         ) : null}
 
-        <Stack direction={{ xs: "column", md: "row" }} spacing={2} alignItems={{ md: "center" }}>
+        <Stack direction={{ xs: "column", md: "row" }} spacing={2} sx={{ alignItems: { md: "center" } }}>
           <TextField
             fullWidth
             placeholder="제목, 담당자, 태그 검색"
             value={searchValue}
             onChange={event => onSearchChange(event.target.value)}
-            InputProps={{
-              startAdornment: (
-                <Box sx={{ display: "flex", alignItems: "center", mr: 1 }}>
-                  <SearchOutlinedIcon sx={{ color: "rgba(226, 232, 240, 0.7)" }} />
-                </Box>
-              ),
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <Box sx={{ display: "flex", alignItems: "center", mr: 1 }}>
+                    <SearchOutlinedIcon sx={{ color: "rgba(226, 232, 240, 0.7)" }} />
+                  </Box>
+                ),
+              },
             }}
             sx={{
               "& .MuiInputBase-input": {
