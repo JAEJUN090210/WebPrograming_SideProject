@@ -8,7 +8,7 @@ type SpecTitleCellProps = {
 export default function SpecTitleCell({ title, tags }: SpecTitleCellProps) {
   return (
     <Stack spacing={0.5}>
-      <Typography variant="subtitle2" sx={{ color: "#f8fafc", fontWeight: 700 }}>
+      <Typography variant="subtitle2" sx={{ color: "var(--idp-text)", fontWeight: 700 }}>
         {title}
       </Typography>
       {tags.length > 0 ? (
@@ -21,7 +21,7 @@ export default function SpecTitleCell({ title, tags }: SpecTitleCellProps) {
               sx={{
                 borderRadius: 999,
                 backgroundColor: "rgba(30, 41, 59, 0.6)",
-                color: "rgba(226, 232, 240, 0.82)",
+                color: "var(--idp-text-muted)",
               }}
             />
           ))}

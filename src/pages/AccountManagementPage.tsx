@@ -15,12 +15,15 @@ import {
   Typography,
 } from "@mui/material"
 import { useEffect, useState } from "react"
+import { fieldSx, panelSx } from "../components/idp/formStyles"
 import SpecPageLayout from "../components/specs/SpecPageLayout"
+import useIdpStore from "../hooks/useIdpStore"
 import { addAccount, getAccounts, removeAccount, type AccountSummary } from "../utils/authClient"
 
 const ROLE_OPTIONS = ["개발", "기획", "디자인", "QA", "운영", "관리자"]
 
 export default function AccountManagementPage() {
+  const { addAuditEntry } = useIdpStore()
   const [accounts, setAccounts] = useState<AccountSummary[]>([])
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
@@ -39,7 +42,10 @@ export default function AccountManagementPage() {
         }
       } catch (error) {
         if (isMounted) {
-          setMessage({ type: "error", text: error instanceof Error ? error.message : "계정 목록을 불러오지 못했습니다." })
+          setMessage({
+            type: "error",
+            text: error instanceof Error ? error.message : "계정 목록을 불러오지 못했습니다.",
+          })
         }
       }
     }
@@ -60,6 +66,11 @@ export default function AccountManagementPage() {
       setName("")
       setRole("")
       setMessage({ type: "success", text: "계정이 추가되었습니다." })
+      addAuditEntry("계정 추가", "account", username, name, "프론트엔드 로컬 계정이 추가되었습니다.", {
+        username,
+        name,
+        role,
+      })
     } catch (error) {
       setMessage({ type: "error", text: error instanceof Error ? error.message : "계정을 추가하지 못했습니다." })
     }
@@ -70,6 +81,9 @@ export default function AccountManagementPage() {
       const result = await removeAccount(targetUsername)
       setAccounts(result.accounts)
       setMessage({ type: "success", text: "계정이 삭제되었습니다." })
+      addAuditEntry("계정 삭제", "account", targetUsername, targetUsername, "프론트엔드 로컬 계정이 삭제되었습니다.", {
+        username: targetUsername,
+      })
     } catch (error) {
       setMessage({ type: "error", text: error instanceof Error ? error.message : "계정을 삭제하지 못했습니다." })
     }
@@ -85,14 +99,13 @@ export default function AccountManagementPage() {
         <Paper
           variant="outlined"
           sx={{
+            ...panelSx,
             px: { xs: 2, sm: 3 },
             py: { xs: 2, sm: 3 },
-            borderColor: "rgba(148, 163, 184, 0.2)",
-            backgroundColor: "rgba(15, 23, 42, 0.7)",
           }}
         >
           <Stack spacing={2}>
-            <Typography variant="h6" sx={{ color: "#f8fafc", fontWeight: 700 }}>
+            <Typography variant="h6" sx={{ color: "var(--idp-text)", fontWeight: 700 }}>
               새 계정 추가
             </Typography>
             {message ? (
@@ -112,22 +125,14 @@ export default function AccountManagementPage() {
                 value={username}
                 onChange={event => setUsername(event.target.value)}
                 fullWidth
-                sx={{
-                  "& .MuiInputLabel-root": { color: "rgba(226, 232, 240, 0.7)" },
-                  "& .MuiInputBase-input": { color: "#f8fafc" },
-                  "& .MuiOutlinedInput-root fieldset": { borderColor: "rgba(148, 163, 184, 0.3)" },
-                }}
+                sx={fieldSx}
               />
               <TextField
                 label="이름"
                 value={name}
                 onChange={event => setName(event.target.value)}
                 fullWidth
-                sx={{
-                  "& .MuiInputLabel-root": { color: "rgba(226, 232, 240, 0.7)" },
-                  "& .MuiInputBase-input": { color: "#f8fafc" },
-                  "& .MuiOutlinedInput-root fieldset": { borderColor: "rgba(148, 163, 184, 0.3)" },
-                }}
+                sx={fieldSx}
               />
             </Stack>
             <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
@@ -137,11 +142,7 @@ export default function AccountManagementPage() {
                 value={password}
                 onChange={event => setPassword(event.target.value)}
                 fullWidth
-                sx={{
-                  "& .MuiInputLabel-root": { color: "rgba(226, 232, 240, 0.7)" },
-                  "& .MuiInputBase-input": { color: "#f8fafc" },
-                  "& .MuiOutlinedInput-root fieldset": { borderColor: "rgba(148, 163, 184, 0.3)" },
-                }}
+                sx={fieldSx}
               />
               <TextField
                 label="직군"
@@ -149,11 +150,7 @@ export default function AccountManagementPage() {
                 onChange={event => setRole(event.target.value)}
                 fullWidth
                 select
-                sx={{
-                  "& .MuiInputLabel-root": { color: "rgba(226, 232, 240, 0.7)" },
-                  "& .MuiInputBase-input": { color: "#f8fafc" },
-                  "& .MuiOutlinedInput-root fieldset": { borderColor: "rgba(148, 163, 184, 0.3)" },
-                }}
+                sx={fieldSx}
               >
                 {ROLE_OPTIONS.map(option => (
                   <MenuItem key={option} value={option}>
@@ -179,30 +176,24 @@ export default function AccountManagementPage() {
           </Stack>
         </Paper>
 
-        <Paper
-          variant="outlined"
-          sx={{
-            borderColor: "rgba(148, 163, 184, 0.2)",
-            backgroundColor: "rgba(15, 23, 42, 0.7)",
-          }}
-        >
+        <Paper variant="outlined" sx={panelSx}>
           <Box sx={{ px: { xs: 2, sm: 3 }, py: 2 }}>
-            <Typography variant="h6" sx={{ color: "#f8fafc", fontWeight: 700 }}>
+            <Typography variant="h6" sx={{ color: "var(--idp-text)", fontWeight: 700 }}>
               계정 목록
             </Typography>
-            <Typography variant="body2" sx={{ color: "rgba(226, 232, 240, 0.7)" }}>
+            <Typography variant="body2" sx={{ color: "var(--idp-text-muted)" }}>
               admin 계정은 기본 계정으로 유지됩니다.
             </Typography>
           </Box>
-          <Divider sx={{ borderColor: "rgba(148, 163, 184, 0.2)" }} />
-          <Table sx={{ "& td, & th": { borderColor: "rgba(148, 163, 184, 0.2)" } }}>
+          <Divider sx={{ borderColor: "var(--idp-border)" }} />
+          <Table sx={{ "& td, & th": { borderColor: "var(--idp-border)" } }}>
             <TableHead>
               <TableRow>
-                <TableCell sx={{ color: "rgba(226, 232, 240, 0.7)" }}>아이디</TableCell>
-                <TableCell sx={{ color: "rgba(226, 232, 240, 0.7)" }}>이름</TableCell>
-                <TableCell sx={{ color: "rgba(226, 232, 240, 0.7)" }}>직군</TableCell>
-                <TableCell sx={{ color: "rgba(226, 232, 240, 0.7)" }}>등록일</TableCell>
-                <TableCell align="right" sx={{ color: "rgba(226, 232, 240, 0.7)" }}>
+                <TableCell sx={{ color: "var(--idp-text-muted)" }}>아이디</TableCell>
+                <TableCell sx={{ color: "var(--idp-text-muted)" }}>이름</TableCell>
+                <TableCell sx={{ color: "var(--idp-text-muted)" }}>직군</TableCell>
+                <TableCell sx={{ color: "var(--idp-text-muted)" }}>등록일</TableCell>
+                <TableCell align="right" sx={{ color: "var(--idp-text-muted)" }}>
                   관리
                 </TableCell>
               </TableRow>
@@ -210,10 +201,10 @@ export default function AccountManagementPage() {
             <TableBody>
               {accounts.map(account => (
                 <TableRow key={account.username}>
-                  <TableCell sx={{ color: "#f8fafc", fontWeight: 600 }}>{account.username}</TableCell>
-                  <TableCell sx={{ color: "rgba(226, 232, 240, 0.82)" }}>{account.name}</TableCell>
-                  <TableCell sx={{ color: "rgba(226, 232, 240, 0.82)" }}>{account.role}</TableCell>
-                  <TableCell sx={{ color: "rgba(226, 232, 240, 0.7)" }}>
+                  <TableCell sx={{ color: "var(--idp-text)", fontWeight: 600 }}>{account.username}</TableCell>
+                  <TableCell sx={{ color: "var(--idp-text-muted)" }}>{account.name}</TableCell>
+                  <TableCell sx={{ color: "var(--idp-text-muted)" }}>{account.role}</TableCell>
+                  <TableCell sx={{ color: "var(--idp-text-muted)" }}>
                     {new Date(account.createdAt).toLocaleDateString("ko-KR")}
                   </TableCell>
                   <TableCell align="right">
@@ -223,7 +214,7 @@ export default function AccountManagementPage() {
                       disabled={account.username === "admin"}
                       onClick={() => handleRemove(account.username)}
                       sx={{
-                        color: account.username === "admin" ? "rgba(148, 163, 184, 0.4)" : "#fca5a5",
+                        color: account.username === "admin" ? "var(--idp-text-soft)" : "#fca5a5",
                         textTransform: "none",
                         "&:hover": {
                           backgroundColor: account.username === "admin" ? "transparent" : "rgba(248, 113, 113, 0.12)",

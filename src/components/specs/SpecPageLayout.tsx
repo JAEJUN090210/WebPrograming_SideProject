@@ -15,16 +15,16 @@ export default function SpecPageLayout({ title, description, eyebrow, children }
         minHeight: "100dvh",
         px: { xs: 2, sm: 3 },
         py: { xs: 4, sm: 6 },
-        color: "#e2e8f0",
+        color: "var(--idp-text)",
         background:
-          "radial-gradient(900px 480px at 15% -10%, rgba(34, 197, 94, 0.12), transparent 60%), radial-gradient(900px 480px at 90% 15%, rgba(56, 189, 248, 0.12), transparent 60%), linear-gradient(180deg, #0a1016 0%, #0b1118 100%)",
+          "radial-gradient(900px 480px at 15% -10%, rgba(34, 197, 94, 0.12), transparent 60%), radial-gradient(900px 480px at 90% 15%, rgba(56, 189, 248, 0.10), transparent 60%), linear-gradient(180deg, var(--idp-bg) 0%, var(--idp-bg-soft) 100%)",
       }}
     >
       <Container maxWidth="lg">
         <Stack spacing={3}>
           <Box>
             {eyebrow ? (
-              <Typography variant="overline" sx={{ letterSpacing: "0.18em", color: "rgba(148, 163, 184, 0.8)" }}>
+              <Typography variant="overline" sx={{ letterSpacing: "0.18em", color: "var(--idp-text-soft)" }}>
                 {eyebrow}
               </Typography>
             ) : null}
@@ -32,13 +32,13 @@ export default function SpecPageLayout({ title, description, eyebrow, children }
               variant="h3"
               sx={{
                 fontWeight: 700,
-                color: "#f8fafc",
+                color: "var(--idp-text)",
                 fontFamily: '"Noto Sans KR", "Segoe UI", sans-serif',
               }}
             >
               {title}
             </Typography>
-            <Typography sx={{ mt: 1, color: "rgba(226, 232, 240, 0.78)" }}>{description}</Typography>
+            <Typography sx={{ mt: 1, color: "var(--idp-text-muted)" }}>{description}</Typography>
           </Box>
           {children}
         </Stack>

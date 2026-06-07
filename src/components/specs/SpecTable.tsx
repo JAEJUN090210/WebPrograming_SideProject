@@ -20,13 +20,13 @@ export default function SpecTable({ columns, children }: SpecTableProps) {
       elevation={0}
       sx={{
         borderRadius: 3,
-        border: "1px solid rgba(148, 163, 184, 0.2)",
-        backgroundColor: "rgba(10, 15, 23, 0.9)",
+        border: "1px solid var(--idp-border)",
+        backgroundColor: "var(--idp-surface)",
       }}
     >
       <Table size="small">
         <TableHead>
-          <TableRow sx={{ backgroundColor: "rgba(15, 23, 42, 0.8)" }}>
+          <TableRow sx={{ backgroundColor: "var(--idp-surface-strong)" }}>
             {columns.map(column => (
               <TableCell
                 key={column.key}
@@ -35,8 +35,8 @@ export default function SpecTable({ columns, children }: SpecTableProps) {
                   fontSize: 12,
                   letterSpacing: "0.08em",
                   textTransform: "uppercase",
-                  color: "rgba(226, 232, 240, 0.72)",
-                  borderBottomColor: "rgba(148, 163, 184, 0.24)",
+                  color: "var(--idp-text-soft)",
+                  borderBottomColor: "var(--idp-border)",
                   width: column.width,
                   py: 1.5,
                   px: 2,

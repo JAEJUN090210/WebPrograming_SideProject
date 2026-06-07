@@ -12,7 +12,7 @@ type SpecMetaListProps = {
 
 export default function SpecMetaList({ items }: SpecMetaListProps) {
   return (
-    <Stack direction="row" spacing={2} sx={{ color: "rgba(226, 232, 240, 0.72)", flexWrap: "wrap", rowGap: 1 }}>
+    <Stack direction="row" spacing={2} sx={{ color: "var(--idp-text-muted)", flexWrap: "wrap", rowGap: 1 }}>
       {items.map(item => (
         <Stack key={item.label} direction="row" spacing={0.75} sx={{ alignItems: "center" }}>
           {item.icon ? (
@@ -20,7 +20,7 @@ export default function SpecMetaList({ items }: SpecMetaListProps) {
               sx={{
                 display: "flex",
                 alignItems: "center",
-                color: "rgba(226, 232, 240, 0.68)",
+                color: "var(--idp-text-soft)",
                 fontSize: 18,
               }}
             >

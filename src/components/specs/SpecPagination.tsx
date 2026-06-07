@@ -21,7 +21,7 @@ export default function SpecPagination({ page, pageCount, pageSize, totalCount, 
         justifyContent: "space-between",
       }}
     >
-      <Typography variant="body2" sx={{ color: "rgba(226, 232, 240, 0.7)" }}>
+      <Typography variant="body2" sx={{ color: "var(--idp-text-muted)" }}>
         {start}-{end} / 총 {totalCount}건
       </Typography>
       <Box>
@@ -32,7 +32,7 @@ export default function SpecPagination({ page, pageCount, pageSize, totalCount, 
           shape="rounded"
           sx={{
             "& .MuiPaginationItem-root": {
-              color: "#e2e8f0",
+              color: "var(--idp-text-muted)",
             },
             "& .Mui-selected": {
               backgroundColor: "rgba(0, 239, 139, 0.18)",

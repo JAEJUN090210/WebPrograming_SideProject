@@ -7,7 +7,7 @@ type SpecStatusChipProps = {
 
 const STATUS_STYLES: Record<SpecStatus, { label: string; sx: Record<string, string> }> = {
   Draft: {
-    label: "Draft",
+    label: "초안",
     sx: {
       color: "#93c5fd",
       borderColor: "rgba(147, 197, 253, 0.5)",
@@ -15,7 +15,7 @@ const STATUS_STYLES: Record<SpecStatus, { label: string; sx: Record<string, stri
     },
   },
   "In Review": {
-    label: "In Review",
+    label: "검토 중",
     sx: {
       color: "#fbbf24",
       borderColor: "rgba(251, 191, 36, 0.45)",
@@ -23,7 +23,7 @@ const STATUS_STYLES: Record<SpecStatus, { label: string; sx: Record<string, stri
     },
   },
   Approved: {
-    label: "Approved",
+    label: "승인됨",
     sx: {
       color: "#34d399",
       borderColor: "rgba(52, 211, 153, 0.45)",
@@ -31,7 +31,7 @@ const STATUS_STYLES: Record<SpecStatus, { label: string; sx: Record<string, stri
     },
   },
   Deprecated: {
-    label: "Deprecated",
+    label: "사용 중단",
     sx: {
       color: "#fda4af",
       borderColor: "rgba(253, 164, 175, 0.5)",

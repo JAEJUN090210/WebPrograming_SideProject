@@ -21,17 +21,17 @@ export default function SpecSummary({ items }: SpecSummaryProps) {
             flex: 1,
             borderRadius: 3,
             p: 2.5,
-            border: "1px solid rgba(148, 163, 184, 0.18)",
-            backgroundColor: "rgba(15, 23, 42, 0.82)",
+            border: "1px solid var(--idp-border)",
+            backgroundColor: "var(--idp-surface)",
           }}
         >
-          <Typography variant="overline" sx={{ color: "rgba(148, 163, 184, 0.8)" }}>
+          <Typography variant="overline" sx={{ color: "var(--idp-text-soft)" }}>
             {item.label}
           </Typography>
-          <Typography variant="h4" sx={{ fontWeight: 700, color: "#f8fafc" }}>
+          <Typography variant="h4" sx={{ fontWeight: 700, color: "var(--idp-text)" }}>
             {item.value}
           </Typography>
-          <Typography variant="body2" sx={{ color: "rgba(226, 232, 240, 0.7)" }}>
+          <Typography variant="body2" sx={{ color: "var(--idp-text-muted)" }}>
             {item.helper}
           </Typography>
         </Paper>

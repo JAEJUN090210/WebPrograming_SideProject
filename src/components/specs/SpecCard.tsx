@@ -33,7 +33,7 @@ export default function SpecCard({
       sx={{
         borderRadius: 3,
         p: { xs: 2.5, sm: 3 },
-        border: "1px solid rgba(148, 163, 184, 0.18)",
+        border: "1px solid var(--idp-border)",
         backgroundColor: "rgba(12, 17, 24, 0.82)",
         backdropFilter: "blur(8px)",
       }}
@@ -42,20 +42,20 @@ export default function SpecCard({
         <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ justifyContent: "space-between" }}>
           <Stack spacing={0.5}>
             {eyebrow ? (
-              <Typography variant="overline" sx={{ color: "rgba(148, 163, 184, 0.9)" }}>
+              <Typography variant="overline" sx={{ color: "var(--idp-text-soft)" }}>
                 {eyebrow}
               </Typography>
             ) : null}
-            <Typography variant="h6" sx={{ color: "#f8fafc", fontWeight: 700 }}>
+            <Typography variant="h6" sx={{ color: "var(--idp-text)", fontWeight: 700 }}>
               {title}
             </Typography>
-            <Typography variant="body2" sx={{ color: "rgba(226, 232, 240, 0.7)" }}>
+            <Typography variant="body2" sx={{ color: "var(--idp-text-muted)" }}>
               {description}
             </Typography>
           </Stack>
           <Stack spacing={1} sx={{ alignItems: { xs: "flex-start", sm: "flex-end" } }}>
             <SpecStatusChip status={status} />
-            <Typography variant="caption" sx={{ color: "rgba(148, 163, 184, 0.8)" }}>
+            <Typography variant="caption" sx={{ color: "var(--idp-text-soft)" }}>
               Updated {updatedAt} · {owner}
             </Typography>
           </Stack>
@@ -79,7 +79,7 @@ export default function SpecCard({
                 label={tag}
                 sx={{
                   borderRadius: 999,
-                  color: "rgba(226, 232, 240, 0.86)",
+                  color: "var(--idp-text-muted)",
                   backgroundColor: "rgba(30, 41, 59, 0.6)",
                 }}
               />
@@ -90,8 +90,8 @@ export default function SpecCard({
               variant="outlined"
               size="small"
               sx={{
-                borderColor: "rgba(148, 163, 184, 0.5)",
-                color: "#e2e8f0",
+                borderColor: "var(--idp-border-strong)",
+                color: "var(--idp-text-muted)",
                 textTransform: "none",
                 fontWeight: 600,
                 "&:hover": {

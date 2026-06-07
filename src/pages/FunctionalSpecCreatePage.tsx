@@ -1,159 +1,153 @@
-import { Button, MenuItem, Paper, Stack, TextField, Typography } from "@mui/material"
+import { Button, MenuItem, Paper, Stack, TextField } from "@mui/material"
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined"
-import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
+import AiDraftSection from "../components/idp/forms/AiDraftSection"
+import DocumentLinksSection from "../components/idp/forms/DocumentLinksSection"
+import TextListField from "../components/idp/forms/TextListField"
+import { fieldSx, pageCardSx } from "../components/idp/formStyles"
+import FormSection from "../components/idp/layout/FormSection"
+import PageActionBar from "../components/idp/layout/PageActionBar"
 import SpecPageLayout from "../components/specs/SpecPageLayout"
+import useIdpStore from "../hooks/useIdpStore"
+import {
+  CATEGORY_OPTIONS,
+  OWNER_OPTIONS,
+  PRIORITY_LABELS,
+  PRIORITY_OPTIONS,
+  REVIEW_STATE_OPTIONS,
+} from "../data/idpOptions"
+import type { FunctionalSpec, ReviewState, SpecPriority } from "../types/specs"
+import { createFunctionalDraftFromPrompt } from "../utils/idpAnalysis"
+import { splitList } from "../utils/idpStore"
 
-type FunctionalSpecDraft = {
-  title: string
-  category: string
-  priority: string
-  owner: string
-  status: string
-  description: string
-  tags: string
-}
+type FunctionalSpecDraft = Omit<FunctionalSpec, "id" | "updatedAt" | "linkedApis">
 
-const CATEGORY_OPTIONS = ["Onboarding", "Design Ops", "Governance", "Platform", "Analytics", "Security"]
-const PRIORITY_OPTIONS = ["Low", "Medium", "High", "Critical"]
-const STATUS_OPTIONS = ["Draft", "In Review", "Approved", "Deprecated"]
-const OWNER_OPTIONS = ["Jenna Park", "Avery Kim", "Riley Chen", "Jordan Lee", "Morgan Yu", "Sam Patel"]
-
-const fieldSx = {
-  "& .MuiInputBase-input": { color: "#f8fafc" },
-  "& .MuiInputBase-input::placeholder": { color: "rgba(226, 232, 240, 0.6)", opacity: 1 },
-  "& .MuiInputLabel-root": { color: "rgba(226, 232, 240, 0.7)" },
-  "& .MuiOutlinedInput-root": {
-    backgroundColor: "rgba(15, 23, 42, 0.6)",
-    borderRadius: 2,
-    "& fieldset": { borderColor: "rgba(148, 163, 184, 0.35)" },
-    "&:hover fieldset": { borderColor: "rgba(56, 189, 248, 0.6)" },
-    "&.Mui-focused fieldset": { borderColor: "#38bdf8" },
-  },
-  "& .MuiFormHelperText-root": { color: "rgba(148, 163, 184, 0.8)" },
+const emptyDraft: FunctionalSpecDraft = {
+  title: "",
+  description: "",
+  owner: "전재준",
+  status: "Draft",
+  category: "기능 명세",
+  priority: "Medium",
+  version: "0.1",
+  tags: [],
+  linkedApiIds: [],
+  linkedEntityIds: [],
+  requirements: [],
+  acceptanceCriteria: [],
+  reviewers: [],
+  reviewState: "대기",
 }
 
 export default function FunctionalSpecCreatePage() {
   const navigate = useNavigate()
-  const [draft, setDraft] = useState<FunctionalSpecDraft>({
-    title: "",
-    category: "",
-    priority: "",
-    owner: "",
-    status: "Draft",
-    description: "",
-    tags: "",
-  })
-  const [categoryMode, setCategoryMode] = useState<"preset" | "custom">("preset")
-  const [customCategory, setCustomCategory] = useState("")
+  const { state, saveFunctionalSpec } = useIdpStore()
+  const [draft, setDraft] = useState<FunctionalSpecDraft>(emptyDraft)
+  const [tags, setTags] = useState("")
+  const [requirements, setRequirements] = useState("")
+  const [criteria, setCriteria] = useState("")
+  const [reviewers, setReviewers] = useState("")
+  const [prompt, setPrompt] = useState("")
   const [submitAttempted, setSubmitAttempted] = useState(false)
 
-  const handleChange = (field: keyof FunctionalSpecDraft) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDraft(current => ({ ...current, [field]: event.target.value }))
+  const missingTitle = draft.title.trim().length === 0
+  const missingDescription = draft.description.trim().length === 0
+  const isInvalid = missingTitle || missingDescription
+
+  const apiOptions = state.apiSpecs.map(api => ({ value: api.id, label: `${api.id} · ${api.name}` }))
+  const entityOptions = state.erdEntities.map(entity => ({
+    value: entity.id,
+    label: `${entity.name} (${entity.fields.length})`,
+  }))
+
+  const handleSave = () => {
+    setSubmitAttempted(true)
+    if (isInvalid) {
+      return
+    }
+
+    const id = saveFunctionalSpec({
+      ...draft,
+      id: "",
+      updatedAt: "",
+      linkedApis: draft.linkedApiIds.length,
+      tags: splitList(tags),
+      requirements: splitList(requirements),
+      acceptanceCriteria: splitList(criteria),
+      reviewers: splitList(reviewers),
+    })
+    navigate(`/specs/functional/${id}`)
   }
 
-  const missingFields = {
-    title: draft.title.trim().length === 0,
-    category: draft.category.trim().length === 0,
-    priority: draft.priority.trim().length === 0,
-    owner: draft.owner.trim().length === 0,
-    status: draft.status.trim().length === 0,
+  const applyAiDraft = () => {
+    const generated = createFunctionalDraftFromPrompt(prompt)
+    setDraft({
+      title: generated.title,
+      description: generated.description,
+      owner: generated.owner,
+      status: generated.status,
+      category: generated.category,
+      priority: generated.priority,
+      version: generated.version,
+      tags: generated.tags,
+      linkedApiIds: generated.linkedApiIds,
+      linkedEntityIds: generated.linkedEntityIds,
+      requirements: generated.requirements,
+      acceptanceCriteria: generated.acceptanceCriteria,
+      reviewers: generated.reviewers,
+      reviewState: generated.reviewState,
+    })
+    setTags(generated.tags.join(", "))
+    setRequirements(generated.requirements.join(", "))
+    setCriteria(generated.acceptanceCriteria.join(", "))
+    setReviewers(generated.reviewers.join(", "))
   }
-
-  const isInvalid = Object.values(missingFields).some(Boolean)
 
   return (
     <SpecPageLayout
-      eyebrow="IDP PLATFORM"
+      eyebrow="IDP SERVICE"
       title="기능 명세서 작성"
-      description="기능 요구사항을 빠르게 정리하고 공유하세요."
+      description="템플릿 기반으로 요구사항, 검증 기준, 연결 API와 데이터 구조를 함께 작성합니다."
     >
-      <Paper
-        elevation={0}
-        sx={{
-          borderRadius: 3,
-          p: { xs: 2.5, sm: 3 },
-          border: "1px solid rgba(148, 163, 184, 0.2)",
-          backgroundColor: "rgba(12, 18, 28, 0.88)",
-        }}
-      >
+      <Paper elevation={0} sx={pageCardSx}>
         <Stack spacing={2.5}>
-          <Stack
-            direction={{ xs: "column", md: "row" }}
-            spacing={2}
-            sx={{ alignItems: { md: "center" }, justifyContent: "space-between" }}
-          >
-            <Button
-              variant="text"
-              startIcon={<ArrowBackOutlinedIcon />}
-              onClick={() => navigate(-1)}
-              sx={{
-                color: "rgba(226, 232, 240, 0.9)",
-                textTransform: "none",
-                fontWeight: 600,
-                "&:hover": { backgroundColor: "rgba(148, 163, 184, 0.12)" },
-              }}
-            >
-              뒤로가기
-            </Button>
+          <PageActionBar onBack={() => navigate(-1)}>
             <Button
               variant="contained"
               startIcon={<AddOutlinedIcon />}
-              onClick={() => setSubmitAttempted(true)}
-              disabled={isInvalid}
+              onClick={handleSave}
               sx={{
                 backgroundColor: "#22c55e",
-                color: "#f8fafc",
-                fontWeight: 700,
-                textTransform: "none",
+                color: "#07120d",
+                fontWeight: 800,
                 "&:hover": { backgroundColor: "#16a34a" },
               }}
             >
-              명세서 생성
+              명세 생성
             </Button>
-          </Stack>
+          </PageActionBar>
 
-          <Paper
-            elevation={0}
-            sx={{
-              borderRadius: 2.5,
-              p: { xs: 2, sm: 2.5 },
-              border: "1px solid rgba(148, 163, 184, 0.2)",
-              backgroundColor: "rgba(15, 23, 42, 0.55)",
-            }}
-          >
+          <AiDraftSection label="작성하려는 기능" prompt={prompt} onPromptChange={setPrompt} onApply={applyAiDraft} />
+
+          <FormSection title="기본 정보">
             <Stack spacing={2}>
-              <Typography variant="h6" sx={{ color: "#f8fafc", fontWeight: 700 }}>
-                기본 정보
-              </Typography>
               <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
                 <TextField
                   label="제목"
                   value={draft.title}
-                  onChange={handleChange("title")}
+                  onChange={event => setDraft(current => ({ ...current, title: event.target.value }))}
+                  error={submitAttempted && missingTitle}
+                  helperText={submitAttempted && missingTitle ? "제목을 입력해 주세요." : ""}
                   fullWidth
-                  error={submitAttempted && missingFields.title}
-                  helperText={submitAttempted && missingFields.title ? "제목을 입력해 주세요" : ""}
                   sx={fieldSx}
                 />
                 <TextField
                   label="카테고리"
-                  value={categoryMode === "custom" ? "custom" : draft.category}
-                  onChange={event => {
-                    const value = event.target.value
-                    if (value === "custom") {
-                      setCategoryMode("custom")
-                      setDraft(current => ({ ...current, category: customCategory }))
-                    } else {
-                      setCategoryMode("preset")
-                      setDraft(current => ({ ...current, category: value }))
-                    }
-                  }}
+                  value={draft.category}
+                  onChange={event => setDraft(current => ({ ...current, category: event.target.value }))}
                   fullWidth
                   select
-                  error={submitAttempted && missingFields.category}
-                  helperText={submitAttempted && missingFields.category ? "카테고리를 선택해 주세요" : ""}
                   sx={fieldSx}
                 >
                   {CATEGORY_OPTIONS.map(option => (
@@ -161,47 +155,15 @@ export default function FunctionalSpecCreatePage() {
                       {option}
                     </MenuItem>
                   ))}
-                  <MenuItem value="custom">직접 입력</MenuItem>
                 </TextField>
-                {categoryMode === "custom" ? (
-                  <TextField
-                    label="카테고리 직접 입력"
-                    value={customCategory}
-                    onChange={event => {
-                      const value = event.target.value
-                      setCustomCategory(value)
-                      setDraft(current => ({ ...current, category: value }))
-                    }}
-                    fullWidth
-                    sx={fieldSx}
-                  />
-                ) : null}
               </Stack>
               <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
                 <TextField
-                  label="우선순위"
-                  value={draft.priority}
-                  onChange={handleChange("priority")}
-                  fullWidth
-                  select
-                  error={submitAttempted && missingFields.priority}
-                  helperText={submitAttempted && missingFields.priority ? "우선순위를 선택해 주세요" : ""}
-                  sx={fieldSx}
-                >
-                  {PRIORITY_OPTIONS.map(option => (
-                    <MenuItem key={option} value={option}>
-                      {option}
-                    </MenuItem>
-                  ))}
-                </TextField>
-                <TextField
                   label="담당자"
                   value={draft.owner}
-                  onChange={handleChange("owner")}
+                  onChange={event => setDraft(current => ({ ...current, owner: event.target.value }))}
                   fullWidth
                   select
-                  error={submitAttempted && missingFields.owner}
-                  helperText={submitAttempted && missingFields.owner ? "담당자를 선택해 주세요" : ""}
                   sx={fieldSx}
                 >
                   {OWNER_OPTIONS.map(option => (
@@ -210,19 +172,33 @@ export default function FunctionalSpecCreatePage() {
                     </MenuItem>
                   ))}
                 </TextField>
-              </Stack>
-              <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
                 <TextField
-                  label="상태"
-                  value={draft.status}
-                  onChange={handleChange("status")}
+                  label="우선순위"
+                  value={draft.priority}
+                  onChange={event =>
+                    setDraft(current => ({ ...current, priority: event.target.value as SpecPriority }))
+                  }
                   fullWidth
                   select
-                  error={submitAttempted && missingFields.status}
-                  helperText={submitAttempted && missingFields.status ? "상태를 선택해 주세요" : ""}
                   sx={fieldSx}
                 >
-                  {STATUS_OPTIONS.map(option => (
+                  {PRIORITY_OPTIONS.map(option => (
+                    <MenuItem key={option} value={option}>
+                      {PRIORITY_LABELS[option]}
+                    </MenuItem>
+                  ))}
+                </TextField>
+                <TextField
+                  label="리뷰 상태"
+                  value={draft.reviewState}
+                  onChange={event =>
+                    setDraft(current => ({ ...current, reviewState: event.target.value as ReviewState }))
+                  }
+                  fullWidth
+                  select
+                  sx={fieldSx}
+                >
+                  {REVIEW_STATE_OPTIONS.map(option => (
                     <MenuItem key={option} value={option}>
                       {option}
                     </MenuItem>
@@ -230,39 +206,37 @@ export default function FunctionalSpecCreatePage() {
                 </TextField>
               </Stack>
             </Stack>
-          </Paper>
+          </FormSection>
 
-          <Paper
-            elevation={0}
-            sx={{
-              borderRadius: 2.5,
-              p: { xs: 2, sm: 2.5 },
-              border: "1px solid rgba(148, 163, 184, 0.2)",
-              backgroundColor: "rgba(15, 23, 42, 0.55)",
-            }}
-          >
+          <FormSection title="상세 내용" description="요구사항과 검증 기준은 테스트/리뷰 단계에서 기준으로 사용됩니다.">
             <Stack spacing={2}>
-              <Typography variant="h6" sx={{ color: "#f8fafc", fontWeight: 700 }}>
-                상세 내용
-              </Typography>
               <TextField
-                label="요약"
+                label="기능 설명"
                 value={draft.description}
-                onChange={handleChange("description")}
+                onChange={event => setDraft(current => ({ ...current, description: event.target.value }))}
+                error={submitAttempted && missingDescription}
+                helperText={submitAttempted && missingDescription ? "기능 설명을 입력해 주세요." : ""}
                 fullWidth
                 multiline
                 minRows={4}
                 sx={fieldSx}
               />
-              <TextField
-                label="태그 (쉼표로 구분)"
-                value={draft.tags}
-                onChange={handleChange("tags")}
-                fullWidth
-                sx={fieldSx}
-              />
+              <TextListField label="요구사항" value={requirements} onChange={setRequirements} />
+              <TextListField label="검증 기준" value={criteria} onChange={setCriteria} />
+              <TextListField label="태그" value={tags} onChange={setTags} />
+              <TextListField label="검토자" value={reviewers} onChange={setReviewers} />
             </Stack>
-          </Paper>
+          </FormSection>
+
+          <DocumentLinksSection
+            primaryLabel="연결 API"
+            primaryValue={draft.linkedApiIds}
+            primaryOptions={apiOptions}
+            onPrimaryChange={value => setDraft(current => ({ ...current, linkedApiIds: value }))}
+            entityValue={draft.linkedEntityIds}
+            entityOptions={entityOptions}
+            onEntityChange={value => setDraft(current => ({ ...current, linkedEntityIds: value }))}
+          />
         </Stack>
       </Paper>
     </SpecPageLayout>

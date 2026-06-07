@@ -40,8 +40,8 @@ export default function SpecToolbar({
       sx={{
         borderRadius: 3,
         p: { xs: 2.5, sm: 3 },
-        border: "1px solid rgba(148, 163, 184, 0.18)",
-        backgroundColor: "rgba(12, 18, 28, 0.88)",
+        border: "1px solid var(--idp-border)",
+        backgroundColor: "var(--idp-surface)",
       }}
     >
       <Stack spacing={2}>
@@ -49,12 +49,12 @@ export default function SpecToolbar({
           <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ justifyContent: "space-between" }}>
             <Box>
               {title ? (
-                <Typography variant="h5" sx={{ fontWeight: 700, color: "#f8fafc" }}>
+                <Typography variant="h5" sx={{ fontWeight: 700, color: "var(--idp-text)" }}>
                   {title}
                 </Typography>
               ) : null}
               {subtitle ? (
-                <Typography variant="body2" sx={{ color: "rgba(226, 232, 240, 0.72)" }}>
+                <Typography variant="body2" sx={{ color: "var(--idp-text-muted)" }}>
                   {subtitle}
                 </Typography>
               ) : null}
@@ -73,25 +73,25 @@ export default function SpecToolbar({
               input: {
                 startAdornment: (
                   <Box sx={{ display: "flex", alignItems: "center", mr: 1 }}>
-                    <SearchOutlinedIcon sx={{ color: "rgba(226, 232, 240, 0.7)" }} />
+                    <SearchOutlinedIcon sx={{ color: "var(--idp-text-soft)" }} />
                   </Box>
                 ),
               },
             }}
             sx={{
               "& .MuiInputBase-input": {
-                color: "#e2e8f0",
+                color: "var(--idp-text)",
               },
               "& .MuiOutlinedInput-root": {
-                backgroundColor: "rgba(2, 6, 23, 0.65)",
+                backgroundColor: "var(--idp-field-bg)",
                 "& fieldset": {
-                  borderColor: "rgba(148, 163, 184, 0.35)",
+                  borderColor: "var(--idp-border-strong)",
                 },
                 "&:hover fieldset": {
-                  borderColor: "rgba(0, 239, 139, 0.6)",
+                  borderColor: "var(--idp-accent)",
                 },
                 "&.Mui-focused fieldset": {
-                  borderColor: "#00ef8b",
+                  borderColor: "var(--idp-accent)",
                 },
               },
             }}
@@ -105,21 +105,21 @@ export default function SpecToolbar({
             sx={{
               minWidth: 180,
               "& .MuiInputBase-input": {
-                color: "#e2e8f0",
+                color: "var(--idp-text)",
               },
               "& .MuiInputLabel-root": {
-                color: "rgba(226, 232, 240, 0.7)",
+                color: "var(--idp-text-soft)",
               },
               "& .MuiOutlinedInput-root": {
-                backgroundColor: "rgba(2, 6, 23, 0.65)",
+                backgroundColor: "var(--idp-field-bg)",
                 "& fieldset": {
-                  borderColor: "rgba(148, 163, 184, 0.35)",
+                  borderColor: "var(--idp-border-strong)",
                 },
                 "&:hover fieldset": {
-                  borderColor: "rgba(0, 239, 139, 0.6)",
+                  borderColor: "var(--idp-accent)",
                 },
                 "&.Mui-focused fieldset": {
-                  borderColor: "#00ef8b",
+                  borderColor: "var(--idp-accent)",
                 },
               },
             }}
@@ -139,21 +139,21 @@ export default function SpecToolbar({
             sx={{
               minWidth: 180,
               "& .MuiInputBase-input": {
-                color: "#e2e8f0",
+                color: "var(--idp-text)",
               },
               "& .MuiInputLabel-root": {
-                color: "rgba(226, 232, 240, 0.7)",
+                color: "var(--idp-text-soft)",
               },
               "& .MuiOutlinedInput-root": {
-                backgroundColor: "rgba(2, 6, 23, 0.65)",
+                backgroundColor: "var(--idp-field-bg)",
                 "& fieldset": {
-                  borderColor: "rgba(148, 163, 184, 0.35)",
+                  borderColor: "var(--idp-border-strong)",
                 },
                 "&:hover fieldset": {
-                  borderColor: "rgba(0, 239, 139, 0.6)",
+                  borderColor: "var(--idp-accent)",
                 },
                 "&.Mui-focused fieldset": {
-                  borderColor: "#00ef8b",
+                  borderColor: "var(--idp-accent)",
                 },
               },
             }}
@@ -168,8 +168,8 @@ export default function SpecToolbar({
           <Button
             variant="outlined"
             sx={{
-              borderColor: "rgba(148, 163, 184, 0.5)",
-              color: "#e2e8f0",
+              borderColor: "var(--idp-border-strong)",
+              color: "var(--idp-text)",
               textTransform: "none",
               fontWeight: 600,
               "&:hover": {

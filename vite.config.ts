@@ -1,20 +1,9 @@
 import { defineConfig } from "vite"
 import react from "@vitejs/plugin-react-swc"
 import { VitePWA } from "vite-plugin-pwa"
-// @ts-expect-error Vite can import the local ESM middleware at runtime.
-import { createAuthMiddleware } from "./server/authMiddleware.mjs"
 
 export default defineConfig({
   plugins: [
-    {
-      name: "webpidp-auth-api",
-      configureServer(server) {
-        server.middlewares.use(createAuthMiddleware())
-      },
-      configurePreviewServer(server) {
-        server.middlewares.use(createAuthMiddleware())
-      },
-    },
     react(),
     VitePWA({
       registerType: "autoUpdate",
@@ -22,11 +11,11 @@ export default defineConfig({
         enabled: true,
       },
       manifest: {
-        name: "Xquare Infra User",
-        short_name: "",
-        description: "WebpIdp PWA Application",
-        theme_color: "#03a9f4",
-        background_color: "#03a9f4",
+        name: "IDP Service",
+        short_name: "IDP",
+        description: "Integrated document platform for feature specs, API specs, ERD, review, AI, and audit logs.",
+        theme_color: "#0f172a",
+        background_color: "#f6f8fb",
         display: "minimal-ui",
         start_url: "/",
         icons: [

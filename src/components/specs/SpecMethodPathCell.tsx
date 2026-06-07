@@ -24,7 +24,7 @@ export default function SpecMethodPathCell({ method, path }: SpecMethodPathCellP
       <Typography
         variant="body2"
         sx={{
-          color: "#e2e8f0",
+          color: "var(--idp-text-muted)",
           fontFamily: '"JetBrains Mono", "SFMono-Regular", "Consolas", "Liberation Mono", monospace',
         }}
       >

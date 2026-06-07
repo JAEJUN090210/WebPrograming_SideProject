@@ -1,77 +1,87 @@
 import { Button, Chip, Divider, MenuItem, Paper, Stack, TextField, Typography } from "@mui/material"
 import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined"
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined"
 import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined"
 import { useMemo, useState } from "react"
-import { useNavigate, useParams } from "react-router-dom"
+import { Link as RouterLink, useNavigate, useParams } from "react-router-dom"
+import CommentPanel from "../components/idp/CommentPanel"
+import InsightPanel from "../components/idp/InsightPanel"
+import MultiSelectField from "../components/idp/MultiSelectField"
+import RelationshipPanel from "../components/idp/RelationshipPanel"
+import VersionPanel from "../components/idp/VersionPanel"
+import { fieldSx, pageCardSx, panelSx } from "../components/idp/formStyles"
 import SpecPageLayout from "../components/specs/SpecPageLayout"
-import apiSpecsData from "../data/apiSpecs.json"
-import type { ApiSpec } from "../types/specs"
-
-type EditableApiSpec = {
-  name: string
-  description: string
-  method: string
-  path: string
-  auth: string
-  owner: string
-  status: string
-  tags: string
-}
-
-const STATUS_OPTIONS = ["Draft", "In Review", "Approved", "Deprecated"]
-const OWNER_OPTIONS = ["Min Seo", "Jenna Park", "Avery Kim", "Riley Chen", "Morgan Yu", "Sam Patel"]
-
-const fieldSx = {
-  "& .MuiInputBase-input": { color: "#f8fafc" },
-  "& .MuiInputBase-input::placeholder": { color: "rgba(226, 232, 240, 0.6)", opacity: 1 },
-  "& .MuiInputLabel-root": { color: "rgba(226, 232, 240, 0.7)" },
-  "& .MuiOutlinedInput-root": {
-    backgroundColor: "rgba(15, 23, 42, 0.6)",
-    borderRadius: 2,
-    "& fieldset": { borderColor: "rgba(148, 163, 184, 0.35)" },
-    "&:hover fieldset": { borderColor: "rgba(56, 189, 248, 0.6)" },
-    "&.Mui-focused fieldset": { borderColor: "#38bdf8" },
-  },
-  "& .MuiFormHelperText-root": { color: "rgba(148, 163, 184, 0.8)" },
-}
+import useIdpStore from "../hooks/useIdpStore"
+import {
+  AUTH_OPTIONS,
+  METHOD_OPTIONS,
+  OWNER_OPTIONS,
+  REVIEW_STATE_OPTIONS,
+  STATUS_LABELS,
+  STATUS_OPTIONS,
+} from "../data/idpOptions"
+import type { ApiSpec, AuthType, HttpMethod, ReviewState, SpecStatus } from "../types/specs"
+import { getApiInsights } from "../utils/idpAnalysis"
+import { splitList } from "../utils/idpStore"
 
 export default function ApiSpecDetailPage() {
   const navigate = useNavigate()
   const { id } = useParams()
-  const specs = apiSpecsData as ApiSpec[]
-  const spec = useMemo(() => specs.find(item => item.id === id), [id, specs])
+  const { state, saveApiSpec, deleteApiSpec, restoreApiVersion, addComment } = useIdpStore()
+  const spec = useMemo(() => state.apiSpecs.find(item => item.id === id), [id, state.apiSpecs])
+  const [form, setForm] = useState<ApiSpec | null>(() => spec ?? null)
+  const [tags, setTags] = useState(() => spec?.tags.join(", ") ?? "")
+  const [reviewers, setReviewers] = useState(() => spec?.reviewers.join(", ") ?? "")
 
-  const [form, setForm] = useState<EditableApiSpec>(() => ({
-    name: spec?.name ?? "",
-    description: spec?.description ?? "",
-    method: spec?.method ?? "",
-    path: spec?.path ?? "",
-    auth: spec?.auth ?? "",
-    owner: spec?.owner ?? "",
-    status: spec?.status ?? "",
-    tags: spec?.tags.join(", ") ?? "",
-  }))
+  const safeForm = form ?? spec
+  const versions = state.versions.filter(version => version.targetType === "api" && version.targetId === id)
+  const comments = state.comments.filter(comment => comment.targetType === "api" && comment.targetId === id)
+  const linkedFunctionalSpecs = state.functionalSpecs.filter(functional =>
+    safeForm?.linkedFunctionalIds.includes(functional.id)
+  )
+  const linkedEntities = state.erdEntities.filter(entity => safeForm?.linkedEntityIds.includes(entity.id))
+  const insights = safeForm ? getApiInsights({ ...safeForm, tags: splitList(tags) }) : []
 
-  const handleChange = (field: keyof EditableApiSpec) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    setForm(current => ({ ...current, [field]: event.target.value }))
+  if (!safeForm) {
+    return (
+      <SpecPageLayout
+        eyebrow="IDP SERVICE"
+        title="API 명세를 찾을 수 없습니다"
+        description="삭제되었거나 존재하지 않는 문서입니다."
+      >
+        <Button component={RouterLink} to="/specs/api" sx={{ color: "#7dd3fc", width: "fit-content" }}>
+          목록으로 이동
+        </Button>
+      </SpecPageLayout>
+    )
+  }
+
+  const updateForm = <K extends keyof ApiSpec>(field: K, value: ApiSpec[K]) => {
+    setForm(current => (current ? { ...current, [field]: value } : current))
+  }
+
+  const handleSave = () => {
+    saveApiSpec({
+      ...safeForm,
+      tags: splitList(tags),
+      reviewers: splitList(reviewers),
+    })
+  }
+
+  const handleDelete = () => {
+    if (window.confirm(`${safeForm.id} API 명세를 삭제할까요?`)) {
+      deleteApiSpec(safeForm.id)
+      navigate("/specs/api")
+    }
   }
 
   return (
     <SpecPageLayout
-      eyebrow="IDP PLATFORM"
+      eyebrow="IDP SERVICE"
       title="API 명세서 상세"
-      description="API 정보를 확인하고 바로 수정할 수 있습니다."
+      description="엔드포인트, 요청/응답 구조, 기능·데이터 연결, 버전과 리뷰를 함께 관리합니다."
     >
-      <Paper
-        elevation={0}
-        sx={{
-          borderRadius: 3,
-          p: { xs: 2.5, sm: 3 },
-          border: "1px solid rgba(148, 163, 184, 0.2)",
-          backgroundColor: "rgba(12, 18, 28, 0.9)",
-          color: "#e2e8f0",
-        }}
-      >
+      <Paper elevation={0} sx={pageCardSx}>
         <Stack spacing={2.5}>
           <Stack
             direction={{ xs: "column", md: "row" }}
@@ -82,33 +92,28 @@ export default function ApiSpecDetailPage() {
               variant="text"
               startIcon={<ArrowBackOutlinedIcon />}
               onClick={() => navigate(-1)}
-              sx={{
-                color: "rgba(226, 232, 240, 0.9)",
-                textTransform: "none",
-                fontWeight: 600,
-                "&:hover": { backgroundColor: "rgba(148, 163, 184, 0.12)" },
-              }}
+              sx={{ color: "var(--idp-text-muted)", fontWeight: 700 }}
             >
               뒤로가기
             </Button>
-            <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
-              <Chip
-                label={form.status || "상태 미설정"}
-                sx={{
-                  borderRadius: 999,
-                  backgroundColor: "rgba(30, 41, 59, 0.6)",
-                  color: "#f8fafc",
-                  fontWeight: 600,
-                }}
-              />
+            <Stack direction="row" spacing={1.25} sx={{ alignItems: "center", flexWrap: "wrap" }}>
+              <Chip label={STATUS_LABELS[safeForm.status]} sx={{ color: "var(--idp-text)", fontWeight: 700 }} />
+              <Button
+                variant="outlined"
+                startIcon={<DeleteOutlineOutlinedIcon />}
+                onClick={handleDelete}
+                sx={{ borderColor: "rgba(248, 113, 113, 0.5)", color: "#fca5a5", fontWeight: 700 }}
+              >
+                삭제
+              </Button>
               <Button
                 variant="contained"
                 startIcon={<SaveOutlinedIcon />}
+                onClick={handleSave}
                 sx={{
                   backgroundColor: "#22c55e",
-                  color: "#f8fafc",
-                  fontWeight: 700,
-                  textTransform: "none",
+                  color: "#07120d",
+                  fontWeight: 800,
                   "&:hover": { backgroundColor: "#16a34a" },
                 }}
               >
@@ -116,141 +121,80 @@ export default function ApiSpecDetailPage() {
               </Button>
             </Stack>
           </Stack>
-          <Stack spacing={1}>
-            <Typography variant="overline" sx={{ color: "rgba(148, 163, 184, 0.8)" }}>
-              {spec?.id ?? "UNKNOWN"}
+
+          <Stack spacing={0.75}>
+            <Typography variant="overline" sx={{ color: "var(--idp-text-soft)" }}>
+              {safeForm.id} · v{safeForm.version} · {safeForm.updatedAt}
             </Typography>
             <TextField
               variant="standard"
-              placeholder="API 이름"
-              value={form.name}
-              onChange={handleChange("name")}
-              slotProps={{
-                input: {
-                  sx: { fontSize: 28, fontWeight: 700, color: "#f8fafc" },
-                },
-              }}
-              sx={{
-                "& .MuiInputBase-input": { color: "#f8fafc" },
-                "& .MuiInputBase-input::placeholder": {
-                  color: "rgba(226, 232, 240, 0.55)",
-                  opacity: 1,
-                },
-              }}
+              value={safeForm.name}
+              onChange={event => updateForm("name", event.target.value)}
+              slotProps={{ input: { sx: { fontSize: 28, fontWeight: 800, color: "var(--idp-text)" } } }}
+              sx={{ "& .MuiInputBase-input": { color: "var(--idp-text)" } }}
             />
           </Stack>
 
-          <Divider sx={{ borderColor: "rgba(148, 163, 184, 0.3)" }} />
+          <Divider sx={{ borderColor: "var(--idp-border)" }} />
 
-          <Paper
-            elevation={0}
-            sx={{
-              borderRadius: 2.5,
-              p: { xs: 2, sm: 2.5 },
-              border: "1px solid rgba(148, 163, 184, 0.2)",
-              backgroundColor: "rgba(15, 23, 42, 0.55)",
-            }}
-          >
-            <Stack spacing={1}>
-              <Typography variant="subtitle2" sx={{ color: "#e2e8f0", fontWeight: 700 }}>
-                요약
-              </Typography>
-              <TextField
-                placeholder="요약을 입력하세요"
-                value={form.description}
-                onChange={handleChange("description")}
-                multiline
-                minRows={4}
-                fullWidth
-                sx={fieldSx}
-              />
-            </Stack>
-          </Paper>
-
-          <Divider sx={{ borderColor: "rgba(148, 163, 184, 0.3)" }} />
-
-          <Paper
-            elevation={0}
-            sx={{
-              borderRadius: 2.5,
-              p: { xs: 2, sm: 2.5 },
-              border: "1px solid rgba(148, 163, 184, 0.2)",
-              backgroundColor: "rgba(15, 23, 42, 0.55)",
-            }}
-          >
+          <Paper elevation={0} sx={panelSx}>
             <Stack spacing={2}>
-              <Typography variant="subtitle2" sx={{ color: "#e2e8f0", fontWeight: 700 }}>
-                엔드포인트
+              <Typography variant="h6" sx={{ color: "var(--idp-text)", fontWeight: 700 }}>
+                엔드포인트 정보
               </Typography>
               <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
                 <TextField
                   label="메서드"
-                  value={form.method}
-                  onChange={handleChange("method")}
-                  fullWidth
-                  variant="outlined"
-                  sx={fieldSx}
-                />
-                <TextField
-                  label="경로"
-                  value={form.path}
-                  onChange={handleChange("path")}
-                  fullWidth
-                  variant="outlined"
-                  sx={fieldSx}
-                />
-              </Stack>
-            </Stack>
-          </Paper>
-
-          <Divider sx={{ borderColor: "rgba(148, 163, 184, 0.3)" }} />
-
-          <Paper
-            elevation={0}
-            sx={{
-              borderRadius: 2.5,
-              p: { xs: 2, sm: 2.5 },
-              border: "1px solid rgba(148, 163, 184, 0.2)",
-              backgroundColor: "rgba(15, 23, 42, 0.55)",
-            }}
-          >
-            <Stack spacing={2}>
-              <Typography variant="subtitle2" sx={{ color: "#e2e8f0", fontWeight: 700 }}>
-                정책 및 상태
-              </Typography>
-              <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
-                <TextField
-                  label="인증 방식"
-                  value={form.auth}
-                  onChange={handleChange("auth")}
-                  fullWidth
-                  variant="outlined"
-                  sx={fieldSx}
-                />
-                <TextField
-                  label="상태"
-                  value={form.status}
-                  onChange={handleChange("status")}
-                  fullWidth
-                  variant="outlined"
+                  value={safeForm.method}
+                  onChange={event => updateForm("method", event.target.value as HttpMethod)}
                   select
+                  fullWidth
                   sx={fieldSx}
                 >
-                  {STATUS_OPTIONS.map(option => (
+                  {METHOD_OPTIONS.map(option => (
+                    <MenuItem key={option} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </TextField>
+                <TextField
+                  label="경로"
+                  value={safeForm.path}
+                  onChange={event => updateForm("path", event.target.value)}
+                  fullWidth
+                  sx={fieldSx}
+                />
+                <TextField
+                  label="인증"
+                  value={safeForm.auth}
+                  onChange={event => updateForm("auth", event.target.value as AuthType)}
+                  select
+                  fullWidth
+                  sx={fieldSx}
+                >
+                  {AUTH_OPTIONS.map(option => (
                     <MenuItem key={option} value={option}>
                       {option}
                     </MenuItem>
                   ))}
                 </TextField>
               </Stack>
+              <TextField
+                label="API 설명"
+                value={safeForm.description}
+                onChange={event => updateForm("description", event.target.value)}
+                multiline
+                minRows={3}
+                fullWidth
+                sx={fieldSx}
+              />
               <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
                 <TextField
                   label="담당자"
-                  value={form.owner}
-                  onChange={handleChange("owner")}
-                  fullWidth
-                  variant="outlined"
+                  value={safeForm.owner}
+                  onChange={event => updateForm("owner", event.target.value)}
                   select
+                  fullWidth
                   sx={fieldSx}
                 >
                   {OWNER_OPTIONS.map(option => (
@@ -260,16 +204,112 @@ export default function ApiSpecDetailPage() {
                   ))}
                 </TextField>
                 <TextField
-                  label="태그"
-                  value={form.tags}
-                  onChange={handleChange("tags")}
+                  label="상태"
+                  value={safeForm.status}
+                  onChange={event => updateForm("status", event.target.value as SpecStatus)}
+                  select
                   fullWidth
-                  helperText="쉼표로 구분해 주세요"
                   sx={fieldSx}
-                />
+                >
+                  {STATUS_OPTIONS.map(option => (
+                    <MenuItem key={option} value={option}>
+                      {STATUS_LABELS[option]}
+                    </MenuItem>
+                  ))}
+                </TextField>
+                <TextField
+                  label="리뷰 상태"
+                  value={safeForm.reviewState}
+                  onChange={event => updateForm("reviewState", event.target.value as ReviewState)}
+                  select
+                  fullWidth
+                  sx={fieldSx}
+                >
+                  {REVIEW_STATE_OPTIONS.map(option => (
+                    <MenuItem key={option} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </TextField>
               </Stack>
+              <TextField
+                label="예상 응답 시간(ms)"
+                type="number"
+                value={safeForm.latencyMs}
+                onChange={event => updateForm("latencyMs", Number(event.target.value))}
+                fullWidth
+                sx={fieldSx}
+              />
+              <TextField
+                label="태그(쉼표로 구분)"
+                value={tags}
+                onChange={event => setTags(event.target.value)}
+                fullWidth
+                sx={fieldSx}
+              />
+              <TextField
+                label="검토자(쉼표로 구분)"
+                value={reviewers}
+                onChange={event => setReviewers(event.target.value)}
+                fullWidth
+                sx={fieldSx}
+              />
             </Stack>
           </Paper>
+
+          <Paper elevation={0} sx={panelSx}>
+            <Stack spacing={2}>
+              <Typography variant="h6" sx={{ color: "var(--idp-text)", fontWeight: 700 }}>
+                요청 / 응답 구조
+              </Typography>
+              <TextField
+                label="요청 예시"
+                value={safeForm.requestBody}
+                onChange={event => updateForm("requestBody", event.target.value)}
+                fullWidth
+                multiline
+                minRows={5}
+                sx={fieldSx}
+              />
+              <TextField
+                label="응답 예시"
+                value={safeForm.responseBody}
+                onChange={event => updateForm("responseBody", event.target.value)}
+                fullWidth
+                multiline
+                minRows={5}
+                sx={fieldSx}
+              />
+            </Stack>
+          </Paper>
+
+          <Paper elevation={0} sx={panelSx}>
+            <Stack spacing={2}>
+              <Typography variant="h6" sx={{ color: "var(--idp-text)", fontWeight: 700 }}>
+                문서 연결
+              </Typography>
+              <MultiSelectField
+                label="연결 기능 명세"
+                value={safeForm.linkedFunctionalIds}
+                options={state.functionalSpecs.map(functional => ({
+                  value: functional.id,
+                  label: `${functional.id} · ${functional.title}`,
+                }))}
+                onChange={value => updateForm("linkedFunctionalIds", value)}
+              />
+              <MultiSelectField
+                label="연결 데이터 테이블"
+                value={safeForm.linkedEntityIds}
+                options={state.erdEntities.map(entity => ({ value: entity.id, label: entity.name }))}
+                onChange={value => updateForm("linkedEntityIds", value)}
+              />
+            </Stack>
+          </Paper>
+
+          <RelationshipPanel functionalSpecs={linkedFunctionalSpecs} entities={linkedEntities} />
+          <InsightPanel insights={insights} />
+          <VersionPanel versions={versions} onRestore={restoreApiVersion} />
+          <CommentPanel comments={comments} onAdd={(message, kind) => addComment("api", safeForm.id, message, kind)} />
         </Stack>
       </Paper>
     </SpecPageLayout>

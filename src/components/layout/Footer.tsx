@@ -4,7 +4,10 @@ import { NavLink } from "react-router-dom"
 const footerLinks = [
   { label: "기능 명세", to: "/specs/functional" },
   { label: "API 명세", to: "/specs/api" },
-  { label: "계정 관리", to: "/accounts" },
+  { label: "ERD", to: "/erd" },
+  { label: "AI 보조", to: "/ai" },
+  { label: "알림", to: "/notifications" },
+  { label: "Audit", to: "/audit" },
 ]
 
 export default function Footer() {
@@ -12,19 +15,19 @@ export default function Footer() {
     <Box
       component="footer"
       sx={{
-        backgroundColor: "#0a0f16",
-        borderTop: "1px solid rgba(148, 163, 184, 0.18)",
-        color: "rgba(226, 232, 240, 0.8)",
+        backgroundColor: "var(--idp-bg)",
+        borderTop: "1px solid var(--idp-border)",
+        color: "var(--idp-text-muted)",
       }}
     >
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <Stack spacing={2}>
           <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ alignItems: { sm: "center" } }}>
-            <Typography variant="subtitle1" sx={{ fontWeight: 700, color: "#f8fafc" }}>
-              WebpIdp
+            <Typography variant="subtitle1" sx={{ fontWeight: 800, color: "var(--idp-text)" }}>
+              IDP Service
             </Typography>
             <Divider flexItem orientation="vertical" sx={{ display: { xs: "none", sm: "block" } }} />
-            <Stack direction="row" spacing={2} sx={{ flexWrap: "wrap" }}>
+            <Stack direction="row" spacing={2} sx={{ flexWrap: "wrap", rowGap: 1 }}>
               {footerLinks.map(link => (
                 <Link
                   key={link.to}
@@ -32,14 +35,10 @@ export default function Footer() {
                   to={link.to}
                   underline="none"
                   sx={{
-                    color: "rgba(226, 232, 240, 0.72)",
-                    fontWeight: 500,
-                    "&.active": {
-                      color: "#00EF8B",
-                    },
-                    "&:hover": {
-                      color: "#f8fafc",
-                    },
+                    color: "var(--idp-text-muted)",
+                    fontWeight: 600,
+                    "&.active": { color: "#00EF8B" },
+                    "&:hover": { color: "var(--idp-text)" },
                   }}
                 >
                   {link.label}
@@ -47,8 +46,8 @@ export default function Footer() {
               ))}
             </Stack>
           </Stack>
-          <Typography variant="caption" sx={{ color: "rgba(148, 163, 184, 0.72)" }}>
-            IDP Platform Spec Console - 2026
+          <Typography variant="caption" sx={{ color: "var(--idp-text-soft)" }}>
+            기능 명세, API 명세, 데이터 구조, 버전, 협업, AI 보조를 통합 관리하는 개발 문서 플랫폼
           </Typography>
         </Stack>
       </Container>

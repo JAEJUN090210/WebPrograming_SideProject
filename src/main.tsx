@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client"
 import { BrowserRouter } from "react-router-dom"
 import { registerSW } from "virtual:pwa-register"
 import App from "./App"
+import { AppThemeProvider } from "./theme/AppThemeProvider"
 import "./global.css"
 
 if ("serviceWorker" in navigator) {
@@ -23,8 +24,10 @@ if (!rootElement) {
 const root = createRoot(rootElement)
 root.render(
   <StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <AppThemeProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </AppThemeProvider>
   </StrictMode>
 )
