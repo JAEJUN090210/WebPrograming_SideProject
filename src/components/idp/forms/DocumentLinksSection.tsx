@@ -1,3 +1,4 @@
+import type { ReactNode } from "react"
 import MultiSelectField from "../MultiSelectField"
 import FormSection from "../layout/FormSection"
 
@@ -15,6 +16,7 @@ type DocumentLinksSectionProps = {
   entityValue: string[]
   entityOptions: LinkOption[]
   onEntityChange: (value: string[]) => void
+  children?: ReactNode
 }
 
 export default function DocumentLinksSection({
@@ -26,6 +28,7 @@ export default function DocumentLinksSection({
   entityValue,
   entityOptions,
   onEntityChange,
+  children,
 }: DocumentLinksSectionProps) {
   return (
     <FormSection title={title} description="기능, API, 데이터 구조를 연결해 변경 영향도를 추적합니다.">
@@ -36,6 +39,7 @@ export default function DocumentLinksSection({
         options={entityOptions}
         onChange={onEntityChange}
       />
+      {children}
     </FormSection>
   )
 }

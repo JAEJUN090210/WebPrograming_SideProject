@@ -1,8 +1,6 @@
 import {
-  Box,
   Button,
   Checkbox,
-  Chip,
   FormControlLabel,
   MenuItem,
   Paper,
@@ -12,15 +10,12 @@ import {
   Typography,
 } from "@mui/material"
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined"
-import PersonAddOutlinedIcon from "@mui/icons-material/PersonAddOutlined"
 import SendOutlinedIcon from "@mui/icons-material/SendOutlined"
-import { useState } from "react"
 import { NOTIFICATION_CHANNEL_OPTIONS, NOTIFICATION_EVENT_OPTIONS } from "../../data/idpOptions"
 import type { NotificationRecipient, NotificationRule } from "../../types/specs"
-import { createClientId } from "../../utils/idpStore"
 import { fieldSx, panelSx } from "../idp/formStyles"
-
-type RecipientDraft = Omit<NotificationRecipient, "id" | "enabled">
+import NotificationRecipientCreateForm from "./NotificationRecipientCreateForm"
+import NotificationRecipientList from "./NotificationRecipientList"
 
 type NotificationRuleCardProps = {
   rule: NotificationRule
@@ -29,15 +24,7 @@ type NotificationRuleCardProps = {
   onTestSend: (rule: NotificationRule) => void
 }
 
-const emptyRecipientDraft: RecipientDraft = {
-  name: "",
-  role: "",
-  contact: "",
-}
-
 export default function NotificationRuleCard({ rule, onChange, onDelete, onTestSend }: NotificationRuleCardProps) {
-  const [recipientDraft, setRecipientDraft] = useState<RecipientDraft>(emptyRecipientDraft)
-
   const updateRule = (patch: Partial<NotificationRule>) => {
     onChange({ ...rule, ...patch })
   }
@@ -55,24 +42,8 @@ export default function NotificationRuleCard({ rule, onChange, onDelete, onTestS
     })
   }
 
-  const addRecipient = () => {
-    if (!recipientDraft.name.trim() || !recipientDraft.contact.trim()) {
-      return
-    }
-
-    updateRule({
-      recipients: [
-        ...rule.recipients,
-        {
-          id: createClientId("REC"),
-          name: recipientDraft.name.trim(),
-          role: recipientDraft.role.trim() || "협업자",
-          contact: recipientDraft.contact.trim(),
-          enabled: true,
-        },
-      ],
-    })
-    setRecipientDraft(emptyRecipientDraft)
+  const addRecipient = (recipient: NotificationRecipient) => {
+    updateRule({ recipients: [...rule.recipients, recipient] })
   }
 
   const removeRecipient = (recipientId: string) => {
@@ -218,117 +189,8 @@ export default function NotificationRuleCard({ rule, onChange, onDelete, onTestS
           </Stack>
         </Stack>
 
-        <Stack spacing={1}>
-          <Stack direction="row" spacing={1} sx={{ justifyContent: "space-between", alignItems: "center" }}>
-            <Typography variant="subtitle2" sx={{ color: "var(--idp-text)", fontWeight: 800 }}>
-              수신자
-            </Typography>
-            <Chip size="small" label={`${rule.recipients.length}명`} />
-          </Stack>
-          {rule.recipients.length > 0 ? (
-            rule.recipients.map(recipient => (
-              <Box
-                key={recipient.id}
-                sx={{
-                  p: 1.25,
-                  borderRadius: 2,
-                  border: "1px solid var(--idp-border)",
-                  backgroundColor: "var(--idp-surface-subtle)",
-                }}
-              >
-                <Stack direction={{ xs: "column", md: "row" }} spacing={1} sx={{ alignItems: { md: "center" } }}>
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={recipient.enabled}
-                        onChange={event => updateRecipient({ ...recipient, enabled: event.target.checked })}
-                      />
-                    }
-                    label=""
-                    sx={{ mr: 0 }}
-                  />
-                  <TextField
-                    label="이름"
-                    value={recipient.name}
-                    onChange={event => updateRecipient({ ...recipient, name: event.target.value })}
-                    sx={fieldSx}
-                  />
-                  <TextField
-                    label="역할"
-                    value={recipient.role}
-                    onChange={event => updateRecipient({ ...recipient, role: event.target.value })}
-                    sx={fieldSx}
-                  />
-                  <TextField
-                    label="연락처/멘션"
-                    value={recipient.contact}
-                    onChange={event => updateRecipient({ ...recipient, contact: event.target.value })}
-                    sx={fieldSx}
-                  />
-                  <Button
-                    size="small"
-                    onClick={() => removeRecipient(recipient.id)}
-                    sx={{ color: "var(--idp-danger)", fontWeight: 800, whiteSpace: "nowrap" }}
-                  >
-                    제거
-                  </Button>
-                </Stack>
-              </Box>
-            ))
-          ) : (
-            <Typography variant="body2" sx={{ color: "var(--idp-text-muted)" }}>
-              등록된 수신자가 없습니다.
-            </Typography>
-          )}
-        </Stack>
-
-        <Box
-          sx={{
-            p: 1.5,
-            borderRadius: 2,
-            border: "1px solid var(--idp-border)",
-            backgroundColor: "var(--idp-surface-subtle)",
-          }}
-        >
-          <Stack spacing={1.25}>
-            <Typography variant="subtitle2" sx={{ color: "var(--idp-text)", fontWeight: 800 }}>
-              수신자 추가
-            </Typography>
-            <Stack direction={{ xs: "column", md: "row" }} spacing={1}>
-              <TextField
-                label="이름"
-                value={recipientDraft.name}
-                onChange={event => setRecipientDraft(current => ({ ...current, name: event.target.value }))}
-                sx={fieldSx}
-              />
-              <TextField
-                label="역할"
-                value={recipientDraft.role}
-                onChange={event => setRecipientDraft(current => ({ ...current, role: event.target.value }))}
-                sx={fieldSx}
-              />
-              <TextField
-                label="연락처/멘션"
-                value={recipientDraft.contact}
-                onChange={event => setRecipientDraft(current => ({ ...current, contact: event.target.value }))}
-                sx={fieldSx}
-              />
-              <Button
-                variant="outlined"
-                startIcon={<PersonAddOutlinedIcon />}
-                onClick={addRecipient}
-                sx={{
-                  borderColor: "var(--idp-border-strong)",
-                  color: "var(--idp-text)",
-                  fontWeight: 800,
-                  whiteSpace: "nowrap",
-                }}
-              >
-                추가
-              </Button>
-            </Stack>
-          </Stack>
-        </Box>
+        <NotificationRecipientList recipients={rule.recipients} onUpdate={updateRecipient} onRemove={removeRecipient} />
+        <NotificationRecipientCreateForm onAdd={addRecipient} />
 
         <Button
           variant="contained"
