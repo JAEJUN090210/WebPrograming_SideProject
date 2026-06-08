@@ -90,11 +90,7 @@ export default function AccountManagementPage() {
   }
 
   return (
-    <SpecPageLayout
-      eyebrow="IDP PLATFORM"
-      title="계정 관리"
-      description="프롬프트 로그인에서 사용할 계정을 관리합니다."
-    >
+    <SpecPageLayout eyebrow="IDP PLATFORM" title="계정 관리">
       <Stack spacing={3}>
         <Paper
           variant="outlined"
@@ -180,9 +176,6 @@ export default function AccountManagementPage() {
           <Box sx={{ px: { xs: 2, sm: 3 }, py: 2 }}>
             <Typography variant="h6" sx={{ color: "var(--idp-text)", fontWeight: 700 }}>
               계정 목록
-            </Typography>
-            <Typography variant="body2" sx={{ color: "var(--idp-text-muted)" }}>
-              admin 계정은 기본 계정으로 유지됩니다.
             </Typography>
           </Box>
           <Divider sx={{ borderColor: "var(--idp-border)" }} />

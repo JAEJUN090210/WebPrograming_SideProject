@@ -81,11 +81,7 @@ export default function FunctionalSpecListPage() {
   }, [searchValue, statusValue, ownerValue, setPage])
 
   return (
-    <SpecPageLayout
-      eyebrow="IDP SERVICE"
-      title="기능 명세서 관리"
-      description="기능 요구사항, API 연결, 데이터 구조, 리뷰 상태를 통합적으로 관리합니다."
-    >
+    <SpecPageLayout eyebrow="IDP SERVICE" title="기능 명세서 관리">
       <SpecSummary items={summaryItems} />
 
       <SpecToolbar

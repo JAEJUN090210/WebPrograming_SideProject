@@ -59,11 +59,7 @@ export default function AuditLogPage() {
   ]
 
   return (
-    <SpecPageLayout
-      eyebrow="IDP SERVICE"
-      title="Audit 로그"
-      description="기능 명세, API 명세, ERD, 댓글, 알림 설정까지 모든 주요 변경 이벤트를 상세히 추적합니다."
-    >
+    <SpecPageLayout eyebrow="IDP SERVICE" title="Audit 로그">
       <SpecSummary items={summaryItems} />
 
       <Paper elevation={0} sx={panelSx}>

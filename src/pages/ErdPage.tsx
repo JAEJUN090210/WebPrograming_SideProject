@@ -75,11 +75,7 @@ export default function ErdPage() {
   }
 
   return (
-    <SpecPageLayout
-      eyebrow="IDP SERVICE"
-      title="DB 관계도(ERD)"
-      description="데이터베이스 테이블, 컬럼, 관계를 시각적으로 관리하고 버전 스냅샷으로 복원합니다."
-    >
+    <SpecPageLayout eyebrow="IDP SERVICE" title="DB 관계도(ERD)">
       <SpecSummary items={summaryItems} />
 
       <Stack direction={{ xs: "column", lg: "row" }} spacing={2.5}>

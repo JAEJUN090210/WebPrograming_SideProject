@@ -50,11 +50,7 @@ export default function FunctionalSpecDetailPage() {
 
   if (!safeForm) {
     return (
-      <SpecPageLayout
-        eyebrow="IDP SERVICE"
-        title="기능 명세를 찾을 수 없습니다"
-        description="삭제되었거나 존재하지 않는 문서입니다."
-      >
+      <SpecPageLayout eyebrow="IDP SERVICE" title="기능 명세를 찾을 수 없습니다">
         <Button component={RouterLink} to="/specs/functional" sx={{ color: "#7dd3fc", width: "fit-content" }}>
           목록으로 이동
         </Button>
@@ -85,11 +81,7 @@ export default function FunctionalSpecDetailPage() {
   }
 
   return (
-    <SpecPageLayout
-      eyebrow="IDP SERVICE"
-      title="기능 명세서 상세"
-      description="기능 요구사항, API·데이터 연결, 버전 이력, 댓글과 AI 검토 결과를 한 화면에서 관리합니다."
-    >
+    <SpecPageLayout eyebrow="IDP SERVICE" title="기능 명세서 상세">
       <Paper elevation={0} sx={pageCardSx}>
         <Stack spacing={2.5}>
           <PageActionBar onBack={() => navigate(-1)}>

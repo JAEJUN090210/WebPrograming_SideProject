@@ -105,11 +105,7 @@ export default function FunctionalSpecCreatePage() {
   }
 
   return (
-    <SpecPageLayout
-      eyebrow="IDP SERVICE"
-      title="기능 명세서 작성"
-      description="템플릿 기반으로 요구사항, 검증 기준, 연결 API와 데이터 구조를 함께 작성합니다."
-    >
+    <SpecPageLayout eyebrow="IDP SERVICE" title="기능 명세서 작성">
       <Paper elevation={0} sx={pageCardSx}>
         <Stack spacing={2.5}>
           <PageActionBar onBack={() => navigate(-1)}>

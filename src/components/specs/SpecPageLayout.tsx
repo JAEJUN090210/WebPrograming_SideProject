@@ -3,12 +3,11 @@ import type { ReactNode } from "react"
 
 type SpecPageLayoutProps = {
   title: string
-  description: string
   eyebrow?: string
   children: ReactNode
 }
 
-export default function SpecPageLayout({ title, description, eyebrow, children }: SpecPageLayoutProps) {
+export default function SpecPageLayout({ title, eyebrow, children }: SpecPageLayoutProps) {
   return (
     <Box
       sx={{
@@ -38,7 +37,6 @@ export default function SpecPageLayout({ title, description, eyebrow, children }
             >
               {title}
             </Typography>
-            <Typography sx={{ mt: 1, color: "var(--idp-text-muted)" }}>{description}</Typography>
           </Box>
           {children}
         </Stack>

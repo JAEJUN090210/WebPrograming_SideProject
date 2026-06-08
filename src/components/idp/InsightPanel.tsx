@@ -39,9 +39,6 @@ export default function InsightPanel({ title = "AI 문서 검토", insights }: I
           <Typography variant="h6" sx={{ color: "var(--idp-text)", fontWeight: 700 }}>
             {title}
           </Typography>
-          <Typography variant="body2" sx={{ color: "var(--idp-text-muted)" }}>
-            프론트엔드 규칙 기반으로 누락, 불일치, 개선 후보를 분석합니다.
-          </Typography>
         </Stack>
 
         <Stack spacing={1.25}>

@@ -16,7 +16,7 @@ export default function ErdEntityForm({ draft, onDraftChange, onSave, onSaveSnap
   const updateDraft = (patch: Partial<EntityDraft>) => onDraftChange({ ...draft, ...patch })
 
   return (
-    <FormSection title="테이블 작성 / 수정" description="테이블과 컬럼 정의를 ERD 문서 단위로 저장합니다.">
+    <FormSection title="테이블 작성 / 수정">
       <Stack spacing={2}>
         <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
           <TextField

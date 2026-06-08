@@ -90,11 +90,7 @@ export default function ApiSpecCreatePage() {
   }
 
   return (
-    <SpecPageLayout
-      eyebrow="IDP SERVICE"
-      title="API 명세서 작성"
-      description="엔드포인트, 인증 방식, 요청/응답 예시와 연결 기능을 함께 작성합니다."
-    >
+    <SpecPageLayout eyebrow="IDP SERVICE" title="API 명세서 작성">
       <Paper elevation={0} sx={pageCardSx}>
         <Stack spacing={2.5}>
           <PageActionBar onBack={() => navigate(-1)}>

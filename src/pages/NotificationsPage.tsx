@@ -28,11 +28,7 @@ export default function NotificationsPage() {
   }
 
   return (
-    <SpecPageLayout
-      eyebrow="IDP SERVICE"
-      title="외부 협업 도구 알림"
-      description="Slack, Discord 알림 규칙과 수신자, 웹훅, 메시지 포맷, 포함 데이터를 상세히 관리합니다."
-    >
+    <SpecPageLayout eyebrow="IDP SERVICE" title="외부 협업 도구 알림">
       <SpecSummary
         items={[
           { label: "알림 규칙", value: state.notificationRules.length, helper: "직접 등록한 채널" },

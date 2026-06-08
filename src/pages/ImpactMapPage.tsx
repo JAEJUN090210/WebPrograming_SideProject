@@ -27,11 +27,7 @@ export default function ImpactMapPage() {
   ]
 
   return (
-    <SpecPageLayout
-      eyebrow="IDP SERVICE"
-      title="문서 관계도 / 영향도 분석"
-      description="기능 명세, API 명세, ERD의 연결 관계를 기반으로 변경 영향 범위를 추적합니다."
-    >
+    <SpecPageLayout eyebrow="IDP SERVICE" title="문서 관계도 / 영향도 분석">
       <SpecSummary items={summaryItems} />
 
       <Paper elevation={0} sx={panelSx}>

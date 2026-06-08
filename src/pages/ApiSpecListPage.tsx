@@ -70,11 +70,7 @@ export default function ApiSpecListPage() {
   }, [searchValue, statusValue, ownerValue, setPage])
 
   return (
-    <SpecPageLayout
-      eyebrow="IDP SERVICE"
-      title="API 명세서 관리"
-      description="엔드포인트, 인증, 요청/응답 구조와 관련 기능·데이터 구조를 통합 관리합니다."
-    >
+    <SpecPageLayout eyebrow="IDP SERVICE" title="API 명세서 관리">
       <SpecSummary items={summaryItems} />
 
       <SpecToolbar

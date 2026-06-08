@@ -52,10 +52,7 @@ export default function NotificationRuleCreateForm({ onCreate }: NotificationRul
   }
 
   return (
-    <FormSection
-      title="알림 규칙 등록"
-      description="Slack 또는 Discord 채널을 직접 추가해 문서 이벤트를 받을 수 있습니다."
-    >
+    <FormSection title="알림 규칙 등록">
       <Stack direction={{ xs: "column", md: "row" }} spacing={1.5}>
         <TextField
           label="채널 유형"

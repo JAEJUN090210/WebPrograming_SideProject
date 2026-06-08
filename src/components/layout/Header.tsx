@@ -1,4 +1,4 @@
-import { AppBar, Box, Button, Container, IconButton, Stack, Toolbar, Tooltip, Typography } from "@mui/material"
+import { AppBar, Box, Button, Container, IconButton, Stack, Toolbar, Tooltip } from "@mui/material"
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined"
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined"
 import { NavLink } from "react-router-dom"
@@ -31,18 +31,43 @@ export default function Header() {
       <Container maxWidth="lg">
         <Toolbar disableGutters sx={{ minHeight: { xs: 64, sm: 72 } }}>
           <Stack direction="row" spacing={2} sx={{ alignItems: "center", flex: 1, minWidth: 0 }}>
-            <Typography
-              variant="h6"
+            <Box
               component={NavLink}
               to="/"
+              aria-label="IDP Service home"
               sx={{
-                fontWeight: 800,
-                color: "var(--idp-text)",
-                whiteSpace: "nowrap",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: { xs: 42, sm: 46 },
+                height: { xs: 42, sm: 46 },
+                flexShrink: 0,
+                borderRadius: 1.5,
+                border: "1px solid transparent",
+                transition: "background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease",
+                "&:hover": {
+                  backgroundColor: "var(--idp-surface-subtle)",
+                  borderColor: "var(--idp-border)",
+                },
+                "&:focus-visible": {
+                  outline: "none",
+                  boxShadow: "0 0 0 3px color-mix(in srgb, #00EF8B 28%, transparent)",
+                },
               }}
             >
-              IDP Service
-            </Typography>
+              <Box
+                component="img"
+                src="/logo/Basic.svg"
+                alt="IDP Service"
+                sx={{
+                  display: "block",
+                  width: { xs: 32, sm: 36 },
+                  height: { xs: 32, sm: 36 },
+                  borderRadius: 0.75,
+                  boxShadow: "0 8px 18px rgba(0, 0, 0, 0.16)",
+                }}
+              />
+            </Box>
             <Box sx={{ flex: 1 }} />
             <Stack
               direction="row"

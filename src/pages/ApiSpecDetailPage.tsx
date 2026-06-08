@@ -40,11 +40,7 @@ export default function ApiSpecDetailPage() {
 
   if (!safeForm) {
     return (
-      <SpecPageLayout
-        eyebrow="IDP SERVICE"
-        title="API 명세를 찾을 수 없습니다"
-        description="삭제되었거나 존재하지 않는 문서입니다."
-      >
+      <SpecPageLayout eyebrow="IDP SERVICE" title="API 명세를 찾을 수 없습니다">
         <Button component={RouterLink} to="/specs/api" sx={{ color: "#7dd3fc", width: "fit-content" }}>
           목록으로 이동
         </Button>
@@ -72,11 +68,7 @@ export default function ApiSpecDetailPage() {
   }
 
   return (
-    <SpecPageLayout
-      eyebrow="IDP SERVICE"
-      title="API 명세서 상세"
-      description="엔드포인트, 요청/응답 구조, 기능·데이터 연결, 버전과 리뷰를 함께 관리합니다."
-    >
+    <SpecPageLayout eyebrow="IDP SERVICE" title="API 명세서 상세">
       <Paper elevation={0} sx={pageCardSx}>
         <Stack spacing={2.5}>
           <PageActionBar onBack={() => navigate(-1)}>

@@ -17,9 +17,6 @@ export default function VersionPanel({ versions, onRestore }: VersionPanelProps)
             <Typography variant="h6" sx={{ color: "var(--idp-text)", fontWeight: 700 }}>
               버전 관리
             </Typography>
-            <Typography variant="body2" sx={{ color: "var(--idp-text-muted)" }}>
-              수정 전 스냅샷을 보관하고 특정 시점으로 복원합니다.
-            </Typography>
           </Stack>
           <Chip label={`${versions.length}개 버전`} sx={{ width: "fit-content", color: "var(--idp-text-muted)" }} />
         </Stack>

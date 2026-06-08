@@ -63,11 +63,7 @@ export default function AiAssistantPage() {
   }
 
   return (
-    <SpecPageLayout
-      eyebrow="IDP SERVICE"
-      title="AI 문서 작성 보조"
-      description="기능/API 명세 초안을 생성하고 누락, 중복, 연결 불일치 후보를 프론트엔드 규칙으로 검토합니다."
-    >
+    <SpecPageLayout eyebrow="IDP SERVICE" title="AI 문서 작성 보조">
       <SpecSummary
         items={[
           { label: "검토 문서", value: state.functionalSpecs.length + state.apiSpecs.length, helper: "AI 점검 대상" },
